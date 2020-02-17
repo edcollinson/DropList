@@ -12,8 +12,10 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.Toast;
 
 import java.lang.reflect.Array;
@@ -25,7 +27,6 @@ import me.dm7.barcodescanner.zxing.ZXingScannerView;
 public class MainActivity extends AppCompatActivity {
 
     List<Product> prodList = new ArrayList<Product>();
-    String EAN;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,12 +47,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-
-        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA)
-                == PackageManager.PERMISSION_DENIED) {
-            ActivityCompat.requestPermissions(MainActivity.this, new String[] {Manifest.permission.CAMERA}, 123);
-        }
     }
 
 
@@ -146,9 +141,25 @@ public class MainActivity extends AppCompatActivity {
     public void addToList(String EAN, String name, int Quant){
         Product prod = new Product(EAN, name, Quant);
         prodList.add(prod);
+        updateDisplay();
     }
 
-    public String getAnswer(String string){
-        return string;
+    public void updateDisplay(){
+        List<String> display = new ArrayList<>();
+        for(int i = 0; i < prodList.size() + 1; i++) {
+            if (i == 0) {
+                display.add("EAN");
+                display.add("Name");
+                display.add("Quantity");
+            } else {
+                display.add(prodList.get(i - 1).getEAN());
+                display.add((prodList.get(i - 1).getName()));
+                display.add(String.valueOf(prodList.get(i - 1).getQuant()));
+            }
+        }
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, display);
+        GridView gridView = (GridView)findViewById(R.id.gridView);
+        gridView.setAdapter(adapter);
+
     }
 }
