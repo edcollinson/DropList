@@ -6,7 +6,7 @@ public class Product {
     private String name;
     private int quant;
 
-    public Product(int mQuant, String mEAN, String mName){
+    public Product(String mEAN, String mName, int mQuant){
         //Get info for instantiation
         EAN = mEAN;
         name = mName;
