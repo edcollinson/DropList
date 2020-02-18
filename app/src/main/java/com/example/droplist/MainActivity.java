@@ -46,27 +46,31 @@ public class MainActivity extends AppCompatActivity {
                 onRemoveClick();
             }
         });
+        // Add Test Data
+        //Product test = new Product("123123", "Test Product", 4);
+        //prodList.add(test);
+        updateDisplay();
 
     }
 
 
 
     public void onRemoveClick(){
-        Toast.makeText(getApplicationContext(), "Remove Button Clicked", Toast.LENGTH_LONG).show();
-        // TODO: Implement Array Removal algo
+        getEAN(false);
+
     }
 
     public void onAddClick(){
         Toast.makeText(getApplicationContext(), "Add Button Clicked", Toast.LENGTH_LONG).show();
         // TODO: Implement barcode scanner
-        getEAN();
+        getEAN(true);
     }
 
     public void updateGrid(){
         // Do the update thingy
     }
 
-    public void getEAN(){
+    public void getEAN(final boolean adding){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final EditText input = new EditText(this);
 
@@ -77,7 +81,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String m_Text = input.getText().toString();
-                getName(m_Text);
+                if(adding == true) {
+                    getName(m_Text);
+                }else{
+                    removeFromList(m_Text);
+                }
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -141,6 +149,22 @@ public class MainActivity extends AppCompatActivity {
     public void addToList(String EAN, String name, int Quant){
         Product prod = new Product(EAN, name, Quant);
         prodList.add(prod);
+        updateDisplay();
+    }
+
+    public void removeFromList(String EAN){
+        int i = 0;
+        for (; i < prodList.size(); i++){
+            if(prodList.get(i).getEAN().equals(EAN)){
+                if(prodList.get(i).getQuant() > 0){
+                    prodList.get(i).setQuant(prodList.get(i).getQuant() - 1);
+                    break;
+                }
+            }
+       }
+        if(prodList.get(i).getQuant() <= 0){
+            prodList.remove(i);
+        }
         updateDisplay();
     }
 

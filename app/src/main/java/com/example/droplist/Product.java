@@ -12,7 +12,7 @@ public class Product {
         name = mName;
         quant = mQuant;
     }
-
+    // Getters
     public int getQuant(){
         return quant;
     }
@@ -23,5 +23,9 @@ public class Product {
 
     public String getEAN(){
         return EAN;
+    }
+    // Setters
+    public void setQuant(int newQuant){
+        quant = newQuant;
     }
 }
