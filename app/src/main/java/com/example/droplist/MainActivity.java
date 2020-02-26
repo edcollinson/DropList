@@ -22,11 +22,14 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.dm7.barcodescanner.zxing.ZXingScannerView;
+import com.google.zxing.client.android.Intents;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 public class MainActivity extends AppCompatActivity {
 
     List<Product> prodList = new ArrayList<Product>();
+    public boolean adding = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,32 +73,23 @@ public class MainActivity extends AppCompatActivity {
         // Do the update thingy
     }
 
-    public void getEAN(final boolean adding){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        final EditText input = new EditText(this);
+    public void getEAN(final boolean add){
+        IntentIntegrator integrator = new IntentIntegrator(this);
+        integrator.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES);  // optional
+        integrator.setPrompt("Please scan the barcode");
+        integrator.setOrientationLocked(false);
+        integrator.initiateScan();
+        adding = add;
+    }
 
-        builder.setTitle("Insert EAN");
-        input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_TEXT_VARIATION_NORMAL);
-        builder.setView(input);
-        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String m_Text = input.getText().toString();
-                if(adding == true) {
-                    getName(m_Text);
-                }else{
-                    removeFromList(m_Text);
-                }
-            }
-        });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-
-        builder.show();
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        IntentResult result = IntentIntegrator.parseActivityResult(resultCode, data);
+        if (adding == true) {
+            getName(result.getContents());
+        }else{
+            removeFromList(result.getContents());
+        }
     }
 
     public void getName(final String EAN){
